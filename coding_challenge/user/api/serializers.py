@@ -3,7 +3,9 @@ from user.models import User,Wallet,Deposits
 from django.db import transaction
 
 
-class User_RegistrationSerializer(serializers.ModelSerializer):    
+class User_RegistrationSerializer(serializers.ModelSerializer):   
+    password = serializers.CharField(
+        write_only=True,) 
     class Meta:
         model = User
         fields = ['email', 'password', 'username',
@@ -30,8 +32,17 @@ class Deposit_serializer(serializers.ModelSerializer):
     class  Meta:
         model = Deposits
         fields  = '__all__'
-class Wallet_serializer(serializers.ModelSerializer):
-    Deposits = Deposit_serializer()
+class Deposits_serializer(serializers.ModelSerializer):
+    # deposits_wallet = Deposit_serializer(read_only=True)
+    # deposit_id = serializers.PrimaryKeyRelatedField(queryset=Deposits.objects.all(), write_only=True )
+    user = User_RegistrationSerializer(read_only=True)
+    user_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True )
+
     class Meta:
-        model = Wallet 
-        fields = ['']
+        model = Deposits 
+        fields = ['amount','currency','user','user_id']
+    def create(self, validated_data):
+        user = validated_data.pop('user_id')
+        print(user)
+        instance = Deposits.objects.create(user=user,**validated_data)
+        return instance

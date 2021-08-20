@@ -37,7 +37,8 @@ class Wallet(models.Model):
         return self.user.username
 class Deposits(models.Model):
     amount = models.FloatField()
-    wallet = models.ForeignKey(Wallet, on_delete=models.SET_NULL,null=True,related_name='deposits_wallet')
+    # wallet = models.ForeignKey(Wallet, on_delete=models.SET_NULL,null=True,related_name='deposits_wallet')
+    user = models.ForeignKey(User, on_delete=models.SET_NULL,null=True,related_name='deposits_user')
 
     currency = models.CharField(
         max_length=3,
