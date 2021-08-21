@@ -40,9 +40,15 @@ class Deposits_serializer(serializers.ModelSerializer):
 
     class Meta:
         model = Deposits 
-        fields = ['amount','currency','user','user_id']
+        fields = ['id','amount','currency','user','user_id']
     def create(self, validated_data):
         user = validated_data.pop('user_id')
-        print(user)
-        instance = Deposits.objects.create(user=user,**validated_data)
-        return instance
+        try:
+            obj = Deposits.objects.get(user=user, currency =validated_data['currency'])
+            obj.amount = validated_data['amount']
+            obj.save()
+            return obj
+        except:
+
+            instance = Deposits.objects.create(user=user,**validated_data)
+            return instance

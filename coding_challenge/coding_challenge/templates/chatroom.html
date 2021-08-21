@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+
+<html>
+   <img id ='image' src="https://www.seekpng.com/png/full/86-860528_alienware-mouse-cursor-free-download-alienware-mouse-gaming.png" height="42" width="42">
+    <canvas id ='canva' onmousemove="track()" style="background-color: aqua;height:100vh;border:2px solid #000000;"></canvas>
+   <head>
+      
+      <script type = "text/javascript">
+         var ws = new WebSocket("ws://localhost:8000/wf/nmnmn/");
+         var canva = document.getElementById('canva')
+         var image = document.getElementById('image')
+        canva.width =document.body.clientWidth 
+        canva.height =document.body.clientHeight 
+         function track() {
+            console.log()
+            ws.send(JSON.stringify({'user_id':4, 'x' :event.clientX , 'y' :event.clientX}))
+         }
+         ws.onmessage = function (evt) { 
+            var received_msg = evt.data;
+            console.log(received_msg);
+         };
+            function WebSocketTest() {
+            
+            if ("WebSocket" in window) {
+               alert("WebSocket is supported by your Browser!");
+               
+               // Let us open a web socket
+				ws.track()
+               ws.onopen = function() {
+                  
+                  // Web Socket is connected, send data using send()
+                  ws.send({'user_id':4 , });
+                  alert("Message is sent...");
+               };
+				
+               
+				
+               ws.onclose = function() { 
+                  
+                  // websocket is closed.
+                  alert("Connection is closed..."); 
+               };
+            } else {
+              
+               // The browser doesn't support WebSocket
+               alert("WebSocket NOT supported by your Browser!");
+            }
+         }
+      </script>
+		
+   </head>
+   
+   <body>
+      <div id = "sse">
+         <a href = "javascript:WebSocketTest()">Run WebSocket</a>
+      </div>
+      
+   </body>
+</html>

@@ -36,7 +36,7 @@ class Wallet(models.Model):
     def __str__(self):
         return self.user.username
 class Deposits(models.Model):
-    amount = models.FloatField()
+    amount = models.IntegerField(max_length=5)
     # wallet = models.ForeignKey(Wallet, on_delete=models.SET_NULL,null=True,related_name='deposits_wallet')
     user = models.ForeignKey(User, on_delete=models.SET_NULL,null=True,related_name='deposits_user')
 
@@ -49,3 +49,11 @@ class Deposits(models.Model):
     )
     def __str__(self):
         return self.currency
+    def save(self, *args, **kwargs):
+        try:
+            obj = Deposits.objects.get(user = self.user , currency = self.currency)
+            obj.amount = obj.amount + self.amount 
+            return obj.save()
+
+        except:
+             return super(Deposits, self).save(*args, **kwargs)
