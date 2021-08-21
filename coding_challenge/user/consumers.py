@@ -5,6 +5,7 @@ import json
 from user.api.serializers import Deposits_serializer
 import random
 from django.core.cache import caches
+#websocket implementation 
 class Deposit(WebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
