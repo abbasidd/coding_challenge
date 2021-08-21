@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from user.models import User,Wallet,Deposits
+from user.models import User,Deposits
 from django.db import transaction
 
 

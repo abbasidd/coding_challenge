@@ -31,10 +31,6 @@ Currencies  = [
     ('BTC', 'BTC'),
     ('USD', 'USD'),
 ]
-class Wallet(models.Model):
-    user = models.OneToOneField(User,on_delete=models.CASCADE,related_name='wallet_user')
-    def __str__(self):
-        return self.user.username
 class Deposits(models.Model):
     amount = models.IntegerField(max_length=5)
     # wallet = models.ForeignKey(Wallet, on_delete=models.SET_NULL,null=True,related_name='deposits_wallet')
