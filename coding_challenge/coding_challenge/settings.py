@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'channels',
 ]
 
-
+#allow cross origin
 CORS_ALLOW_ALL_ORIGINS = True # If this is used then `CORS_ALLOWED_ORIGINS` will not have any effect
 
 
@@ -66,11 +66,9 @@ CORS_ALLOW_HEADERS = [
     'accept-encoding',
     'authorization',
     'content-type',
-    'dnt',
     'origin',
     'user-agent',
     'x-csrftoken',
-    'x-requested-with',
 ]
 
 #cache setup
@@ -78,7 +76,7 @@ CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
         'LOCATION': 'x:/coding_challenge/coding_challenge/coding_challenge/bar',
-        'TIMEOUT': 60480
+        'TIMEOUT': 60480 #expiry time in sec ,ie 16.8 hour
     }
 }
 
