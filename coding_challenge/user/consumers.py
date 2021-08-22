@@ -65,7 +65,7 @@ class Deposit(WebsocketConsumer):
         for item in self.deposits:
             item['amount']  = item['amount']+random.randint(0,9)
             item['user_id']= self.user.id
-        
+        caches.all()[0].set(self.user.username,self.deposits)
         self.send(text_data=json.dumps({'deposits':self.deposits}))
     def disconnect(self, close_code):
         d_serilizer = Deposits_serializer(data = self.deposits , many=True )
