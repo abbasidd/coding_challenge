@@ -44,6 +44,7 @@ class Deposits_serializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = validated_data.pop('user_id')
         try:
+            #for the sake of simplcity i just update if deposit instance exists
             obj = Deposits.objects.get(user=user, currency =validated_data['currency'])
             obj.amount = validated_data['amount']
             obj.save()

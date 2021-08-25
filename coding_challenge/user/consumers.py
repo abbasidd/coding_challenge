@@ -5,7 +5,38 @@ import json
 from user.api.serializers import Deposits_serializer
 import random
 from django.core.cache import caches
+from datetime import datetime, timedelta
+import pytz
+from django.utils import timezone
+
 #websocket implementation 
+'''cache implementation using file system
+first it will check if any cache file from particular user exists if exists
+the it will check its expiry time if it is expire then it will fetch data from DB and 
+overwrite the file ,if expiry time is good then it will set the deposits variable of Deposit(WebsocketConsumer)class   
+    '''
+def cache_manual(self):
+    try:
+        cache = open('x:\\coding_challenge\\coding_challenge\\coding_challenge\\bar\\'+ self.user.username+'.json','r') 
+        cache =json.load(cache)
+        expiry = datetime.strptime(cache[0]['expiry'].split('+')[0], '%Y-%m-%d %H:%M:%S.%f')
+        print(pytz.utc.localize(expiry))
+        print(timezone.now())
+        if timezone.now() < pytz.utc.localize(expiry):
+            print('gooo')
+            self.deposits = cache
+        else:
+            print('fooo')
+            self.deposits = Deposits_serializer(Deposits.objects.filter(user = self.user), many=True).data
+            input_file = open('x:\\coding_challenge\\coding_challenge\\coding_challenge\\bar\\'+ self.user.username+'.json','w')
+            self.deposits[0]['expiry'] =str(timezone.now() + timedelta(minutes=30))
+            input_file.write(json.dumps(self.deposits))
+    except:
+        print('ecxkd')
+        self.deposits = Deposits_serializer(Deposits.objects.filter(user = self.user), many=True).data
+        input_file = open('x:\\coding_challenge\\coding_challenge\\coding_challenge\\bar\\'+ self.user.username+'.json','w')
+        self.deposits[0]['expiry'] =str(timezone.now() + timedelta(minutes=30))
+        input_file.write(json.dumps(self.deposits))
 class Deposit(WebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -14,15 +45,8 @@ class Deposit(WebsocketConsumer):
     def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['user_id']
         self.user = User.objects.get(id = self.room_name)
-        if caches.all()[0].get(self.user.username):
-            self.deposits = caches.all()[0].get('usman')
-        else:
-            ser1 = Deposits_serializer(Deposits.objects.filter(user = self.user), many=True)
-            self.deposits = ser1.data
-            caches.all()[0].set(self.user.username,self.deposits)
-        
+        cache_manual(self=self)
         self.room_group_name = self.user.username
-
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,
             self.channel_name
@@ -51,7 +75,7 @@ class Deposit(WebsocketConsumer):
         )
 
             
-
+# for saving or updating deposit model obj
     def deposit(self, event):
         ser = Deposits_serializer(data = event,partial=True)
         if ser.is_valid():
