@@ -17,7 +17,11 @@ get ,set apis for deposit model.
 
 for achieving real-time experience ; I use websockets.
 
-Cache setup by using files (with expiry time)
+Cache setup by using files (with expiry time):: cache implementation using file system
+first it will check if any cache file from particular user exists if exists
+then it will check its expiry time if it is expire then it will fetch data from DB and 
+overwrite the file , and if expiry time is good then it will set the deposits(in which deposit's data store) variable of Deposit(Websocket) class. And if the cache file of particular user does not exists then it will make a json file name after user's username then it grabs model objects(queryset) then serialize it ,add expiry time(add 30 minutes to current time) of 30 minutes, save it into file and set the deposits(in which deposit's data store) variable of Deposit(Websocket) class.
+
 
 So when user connects to websocket with a user id, then it will check in the cache for specific user if its in the cache; then it will not query database and it will get the data from cache and updates it in the memory(websocket instance's variables). 
 And when user disconnects the websocket then it will grab the values and using serializer we can save it in the database.
