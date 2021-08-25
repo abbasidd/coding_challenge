@@ -23,16 +23,13 @@ def cache_manual(self):
         print(pytz.utc.localize(expiry))
         print(timezone.now())
         if timezone.now() < pytz.utc.localize(expiry):
-            print('gooo')
             self.deposits = cache
         else:
-            print('fooo')
             self.deposits = Deposits_serializer(Deposits.objects.filter(user = self.user), many=True).data
             input_file = open('x:\\coding_challenge\\coding_challenge\\coding_challenge\\bar\\'+ self.user.username+'.json','w')
             self.deposits[0]['expiry'] =str(timezone.now() + timedelta(minutes=30))
             input_file.write(json.dumps(self.deposits))
     except:
-        print('ecxkd')
         self.deposits = Deposits_serializer(Deposits.objects.filter(user = self.user), many=True).data
         input_file = open('x:\\coding_challenge\\coding_challenge\\coding_challenge\\bar\\'+ self.user.username+'.json','w')
         self.deposits[0]['expiry'] =str(timezone.now() + timedelta(minutes=30))
@@ -90,6 +87,7 @@ class Deposit(WebsocketConsumer):
             item['amount']  = item['amount']+random.randint(0,9)
             item['user_id']= self.user.id
         caches.all()[0].set(self.user.username,self.deposits)
+        cache_manual(self=self)
         self.send(text_data=json.dumps({'deposits':self.deposits}))
     def disconnect(self, close_code):
         d_serilizer = Deposits_serializer(data = self.deposits , many=True )
